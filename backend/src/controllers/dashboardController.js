@@ -1,4 +1,4 @@
-import JobLog from '../models/JobLog.js';
+import JobLog from '../models/jobLog.js';
 
 export const getDashboardData = async (req, res) => {
     try {
