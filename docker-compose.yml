@@ -23,7 +23,7 @@ services:
     container_name: frontend
     build: ./frontend
     ports:
-      - "1337:3000"
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     depends_on:
       - backend
     env_file:
