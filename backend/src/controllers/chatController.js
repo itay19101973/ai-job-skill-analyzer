@@ -1,6 +1,7 @@
 import { generateMongoQuery } from '../services/geminiService.js';
 import { executeMongoQuery } from '../services/queryExecutor.js';
 
+
 export const processQuery = async (req, res) => {
     try {
         const { question } = req.body;
@@ -13,8 +14,6 @@ export const processQuery = async (req, res) => {
 
         // Step 1: Generate MongoDB query using OpenAI
         const queryData = await generateMongoQuery(question);
-
-        console.log('Generated Query Data:', queryData);
 
         // Step 2: Execute the generated query
         const result = await executeMongoQuery(queryData);

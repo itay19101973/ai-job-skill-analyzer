@@ -2,8 +2,8 @@ import React from 'react';
 
 const ExampleQueries = ({ onSelectQuery, disabled }) => {
     const exampleQueries = [
-        "Average jobs indexed per client last month",
-        "Show all failed jobs from Deal1",
+        "Average jobs indexed per client in June 2025",
+        "Show all completed jobs from Deal1",
         "Total jobs processed by country this week",
         "Which client has the highest success rate?",
         "Jobs that failed indexing in the last 7 days",

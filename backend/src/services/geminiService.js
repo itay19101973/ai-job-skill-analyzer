@@ -89,6 +89,8 @@ Example:
   "$gte": "2025-07-01T00:00:00.000Z",
   "$lt": "2025-08-01T00:00:00.000Z"
 }
+
+If the user's prompt is invalid or inappropriate, return a appropriate error message.
 `;
 
 export const generateMongoQuery = async (userQuestion) => {
@@ -112,6 +114,8 @@ export const generateMongoQuery = async (userQuestion) => {
             .replace(/```json\s*/, '')   // Remove starting ```json
             .replace(/```/, '')          // Remove ending ```
             .trim();
+
+        console.log('Received Content:', content);
 
         try {
             return JSON.parse(jsonString);

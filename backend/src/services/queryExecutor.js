@@ -1,4 +1,5 @@
 import JobLog from '../models/jobLog.js';
+import { formatDatesInQueryObject } from '../utils/helpers.js';
 
 export const executeMongoQuery = async (queryData) => {
     try {
@@ -14,15 +15,21 @@ export const executeMongoQuery = async (queryData) => {
 
         let result;
 
+        const processedQuery = formatDatesInQueryObject(query);
+
+        console.log('Process Query: ', JSON.stringify(processedQuery, null, 4));
+
         if (queryType === 'aggregate') {
             // Execute aggregation pipeline
-            result = await JobLog.aggregate(query);
+            result = await JobLog.aggregate(processedQuery);
         } else if (queryType === 'find') {
             // Execute find query
-            result = await JobLog.find(query).lean();
+            result = await JobLog.find(processedQuery).lean();
         } else {
             throw new Error('Invalid query type');
         }
+
+        console.log(result);
 
         return {
             success: true,
