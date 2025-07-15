@@ -6,8 +6,9 @@ const Navigation = () => {
 
     const isActive = (path) => {
         if (path === '/' && location.pathname === '/') return true;
-        if (path !== '/' && location.pathname.startsWith(path)) return true;
-        return false;
+
+        return path !== '/' && location.pathname.startsWith(path);
+
     };
 
     const navItems = [
@@ -43,7 +44,7 @@ const Navigation = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
-                            <span className="text-xl font-bold text-gray-900">Botson.ai</span>
+                            <span className="text-xl font-bold text-gray-900">Job Analyzer</span>
                         </Link>
                     </div>
 

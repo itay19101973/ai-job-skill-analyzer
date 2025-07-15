@@ -7,7 +7,7 @@ const ExampleQueries = ({ onSelectQuery, disabled }) => {
         "Total jobs processed by country this week",
         "Which client has the highest success rate?",
         "Jobs that failed indexing in the last 7 days",
-        "Average processing time by client"
+        "Average TOTAL_JOBS_SENT_TO_INDEX per client last month?"
     ];
 
     return (
