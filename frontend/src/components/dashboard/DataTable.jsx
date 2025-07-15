@@ -1,59 +1,8 @@
 import React from 'react';
 import { formatDate, formatNumber } from '../../utils/formatters';
+import { SortableHeader, getStatusBadge } from '../../utils/tableUtils';
 
 const DataTable = ({ data, filters, onSort }) => {
-    const handleSort = (field) => {
-        const newOrder = filters.sortBy === field && filters.sortOrder === 'asc' ? 'desc' : 'asc';
-        onSort(field, newOrder);
-    };
-
-    const getSortIcon = (field) => {
-        if (filters.sortBy !== field) {
-            return (
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                </svg>
-            );
-        }
-
-        return filters.sortOrder === 'asc' ? (
-            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-        ) : (
-            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-        );
-    };
-
-    const SortableHeader = ({ field, children }) => (
-        <th
-            onClick={() => handleSort(field)}
-            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-        >
-            <div className="flex items-center space-x-1">
-                <span>{children}</span>
-                {getSortIcon(field)}
-            </div>
-        </th>
-    );
-
-    const getStatusBadge = (status) => {
-        const statusColors = {
-            completed: 'bg-green-100 text-green-800',
-            failed: 'bg-red-100 text-red-800',
-            pending: 'bg-yellow-100 text-yellow-800',
-            default: 'bg-gray-100 text-gray-800'
-        };
-
-        return (
-            <span className={`px-2 py-1 text-xs rounded-full ${statusColors[status] || statusColors.default}`}>
-        {status}
-      </span>
-        );
-    };
-
     if (data.length === 0) {
         return (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
@@ -68,14 +17,30 @@ const DataTable = ({ data, filters, onSort }) => {
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                     <tr>
-                        <SortableHeader field="timestamp">Timestamp</SortableHeader>
-                        <SortableHeader field="transactionSourceName">Client</SortableHeader>
-                        <SortableHeader field="country_code">Country</SortableHeader>
-                        <SortableHeader field="status">Status</SortableHeader>
-                        <SortableHeader field="progress.TOTAL_JOBS_IN_FEED">Jobs in Feed</SortableHeader>
-                        <SortableHeader field="progress.TOTAL_JOBS_SENT_TO_INDEX">Jobs Indexed</SortableHeader>
-                        <SortableHeader field="progress.TOTAL_JOBS_FAIL_INDEXED">Jobs Failed</SortableHeader>
-                        <SortableHeader field="recordCount">Record Count</SortableHeader>
+                        <SortableHeader field="timestamp" filters={filters} onSort={onSort}>
+                            Timestamp
+                        </SortableHeader>
+                        <SortableHeader field="transactionSourceName" filters={filters} onSort={onSort}>
+                            Client
+                        </SortableHeader>
+                        <SortableHeader field="country_code" filters={filters} onSort={onSort}>
+                            Country
+                        </SortableHeader>
+                        <SortableHeader field="status" filters={filters} onSort={onSort}>
+                            Status
+                        </SortableHeader>
+                        <SortableHeader field="progress.TOTAL_JOBS_IN_FEED" filters={filters} onSort={onSort}>
+                            Jobs in Feed
+                        </SortableHeader>
+                        <SortableHeader field="progress.TOTAL_JOBS_SENT_TO_INDEX" filters={filters} onSort={onSort}>
+                            Jobs Indexed
+                        </SortableHeader>
+                        <SortableHeader field="progress.TOTAL_JOBS_FAIL_INDEXED" filters={filters} onSort={onSort}>
+                            Jobs Failed
+                        </SortableHeader>
+                        <SortableHeader field="recordCount" filters={filters} onSort={onSort}>
+                            Record Count
+                        </SortableHeader>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Success Rate
                         </th>

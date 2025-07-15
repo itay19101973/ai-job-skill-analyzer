@@ -90,7 +90,13 @@ Example:
   "$lt": "2025-08-01T00:00:00.000Z"
 }
 
-If the user's prompt is invalid or inappropriate, return a appropriate error message.
+If the user's prompt is invalid or inappropriate, return a appropriate error message but keep the JSON structure.
+Error Example:
+{
+  "queryType": "error",
+  "query": null,
+  "explanation": "Inappropriate language detected. Please rephrase your query."
+}
 `;
 
 export const generateMongoQuery = async (userQuestion) => {

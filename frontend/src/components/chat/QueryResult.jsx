@@ -1,21 +1,51 @@
 import React, { useState, useMemo } from 'react';
-import DataTable from '../dashboard/DataTable';
+import QueryDataTable from './QueryDataTable';
 import Pagination from '../dashboard/Pagination';
 
 const QueryResult = ({ result, onClear }) => {
     const { data, explanation, queryType, recordCount } = result;
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize] = useState(10); // Fixed page size for chat results
+    const [sortBy, setSortBy] = useState('');
+    const [sortOrder, setSortOrder] = useState('asc');
 
-    const handleSort = () => {
-        // For simplicity, we'll disable sorting in chat results
-        // In a production app, you might want to implement client-side sorting
-        return;
+    const handleSort = (field, order) => {
+        setSortBy(field);
+        setSortOrder(order);
     };
+
+    // Sort data if sorting is applied
+    const sortedData = useMemo(() => {
+        if (!data || data.length === 0 || !sortBy) return data;
+
+        return [...data].sort((a, b) => {
+            const aVal = a[sortBy];
+            const bVal = b[sortBy];
+
+            // Handle null/undefined values
+            if (aVal === null || aVal === undefined) return 1;
+            if (bVal === null || bVal === undefined) return -1;
+
+            // Handle numeric values
+            if (typeof aVal === 'number' && typeof bVal === 'number') {
+                return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
+            }
+
+            // Handle string values
+            const aStr = aVal.toString().toLowerCase();
+            const bStr = bVal.toString().toLowerCase();
+
+            if (sortOrder === 'asc') {
+                return aStr.localeCompare(bStr);
+            } else {
+                return bStr.localeCompare(aStr);
+            }
+        });
+    }, [data, sortBy, sortOrder]);
 
     // Calculate pagination data
     const pagination = useMemo(() => {
-        if (!data || data.length === 0) {
+        if (!sortedData || sortedData.length === 0) {
             return {
                 currentPage: 1,
                 totalPages: 1,
@@ -26,32 +56,37 @@ const QueryResult = ({ result, onClear }) => {
             };
         }
 
-        const totalPages = Math.ceil(data.length / pageSize);
+        const totalPages = Math.ceil(sortedData.length / pageSize);
         const hasNextPage = currentPage < totalPages;
         const hasPrevPage = currentPage > 1;
 
         return {
             currentPage,
             totalPages,
-            totalCount: data.length,
+            totalCount: sortedData.length,
             limit: pageSize,
             hasNextPage,
             hasPrevPage
         };
-    }, [data, currentPage, pageSize]);
+    }, [sortedData, currentPage, pageSize]);
 
     // Get current page data
     const currentPageData = useMemo(() => {
-        if (!data || data.length === 0) return [];
+        if (!sortedData || sortedData.length === 0) return [];
 
         const startIndex = (currentPage - 1) * pageSize;
         const endIndex = startIndex + pageSize;
-        return data.slice(startIndex, endIndex);
-    }, [data, currentPage, pageSize]);
+        return sortedData.slice(startIndex, endIndex);
+    }, [sortedData, currentPage, pageSize]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+
+    // Reset pagination when sorting changes
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [sortBy, sortOrder]);
 
     return (
         <div className="space-y-4">
@@ -80,9 +115,9 @@ const QueryResult = ({ result, onClear }) => {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 {data && data.length > 0 ? (
                     <>
-                        <DataTable
+                        <QueryDataTable
                             data={currentPageData}
-                            filters={{}} // No filters for chat results
+                            filters={{ sortBy, sortOrder }}
                             onSort={handleSort}
                         />
 
