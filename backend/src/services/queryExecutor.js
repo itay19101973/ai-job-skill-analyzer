@@ -1,4 +1,4 @@
-import JobLog from '../models/JobLog.js';
+import JobLog from '../models/jobLog.js';
 
 export const executeMongoQuery = async (queryData) => {
     try {
@@ -18,8 +18,8 @@ export const executeMongoQuery = async (queryData) => {
             // Execute aggregation pipeline
             result = await JobLog.aggregate(query);
         } else if (queryType === 'find') {
-            // Execute find query with limit for safety
-            result = await JobLog.find(query).limit(100).lean();
+            // Execute find query
+            result = await JobLog.find(query).lean();
         } else {
             throw new Error('Invalid query type');
         }

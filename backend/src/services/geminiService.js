@@ -1,8 +1,6 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const SYSTEM_PROMPT = `You are an AI assistant that helps users query job processing data from a MongoDB database. 
 
@@ -80,37 +78,55 @@ Response: {
     "status": "failed"
   },
   "explanation": "This query finds all records where the client is Deal1 and status is failed"
-}`;
+}
+
+IMPORTANT: Return valid JSON only.
+Use ISO 8601 date strings in quotes (e.g., "2024-07-01T00:00:00.000Z").
+Do NOT use ISODate(...), new Date(...), or any code functions.
+
+Example:
+{
+  "$gte": "2025-07-01T00:00:00.000Z",
+  "$lt": "2025-08-01T00:00:00.000Z"
+}
+`;
 
 export const generateMongoQuery = async (userQuestion) => {
     try {
-        const response = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                { role: 'user', content: userQuestion }
-            ],
-            temperature: 0.1,
-            max_tokens: 1000,
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-1.5-flash',
+            generationConfig: {
+                temperature: 0.1,
+                maxOutputTokens: 1000,
+            }
         });
 
-        const content = response.choices[0].message.content;
+        const prompt = `${SYSTEM_PROMPT}\n\nUser Question: ${userQuestion}`;
 
-        // Try to parse the JSON response
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const content = response.text();
+
+        // Clean up the response to extract pure JSON
+        const jsonString = content
+            .replace(/```json\s*/, '')   // Remove starting ```json
+            .replace(/```/, '')          // Remove ending ```
+            .trim();
+
         try {
-            const parsedResponse = JSON.parse(content);
-            return parsedResponse;
+            return JSON.parse(jsonString);
         } catch (parseError) {
-            // If JSON parsing fails, try to extract query from the response
-            console.warn('Failed to parse OpenAI response as JSON:', parseError);
+            console.warn('Failed to parse Gemini response as JSON:', parseError);
+            console.warn('Content:', content);
             return {
                 queryType: 'error',
                 query: null,
                 explanation: 'Failed to parse the generated query. Please try rephrasing your question.'
             };
         }
+
     } catch (error) {
-        console.error('OpenAI API error:', error);
+        console.error('Gemini API error:', error);
         throw new Error('Failed to generate query. Please try again.');
     }
 };

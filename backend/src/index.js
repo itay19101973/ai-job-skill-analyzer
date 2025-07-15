@@ -4,7 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dashboardRoutes from './routes/dashboard.js';
 import chatRoutes from './routes/chat.js';
-import { validateDashboardQuery } from './middleware/validation.js';
+import { validateDashboardQuery } from './middleware/dashboardValidation.js';
 import { validateChatQuery, chatRateLimit } from './middleware/chatValidation.js';
 
 dotenv.config();

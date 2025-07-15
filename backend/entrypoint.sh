@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-# Import feeds to mongo
-node importFeeds.js
+# Start importFeeds.js asynchronously (in background)
+node importFeeds.js &
 
-# After import completes, start the main app
+# Start main app immediately
 exec node src/index.js

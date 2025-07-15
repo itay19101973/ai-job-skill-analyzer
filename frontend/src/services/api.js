@@ -32,6 +32,13 @@ class ApiService {
     async getFilterOptions() {
         return this.request('/api/dashboard/filter-options');
     }
+
+    async chatQuery(question) {
+        return this.request('/api/chat/query', {
+            method: 'POST',
+            body: JSON.stringify({ question }),
+        });
+    }
 }
 
 export default new ApiService();
